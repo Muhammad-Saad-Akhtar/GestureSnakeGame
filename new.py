@@ -7,14 +7,14 @@ import time
 import pygame  # For playing sounds
 from cvzone.HandTrackingModule import HandDetector
 
-# Initialize pygame mixer for sound effects
+# Initializing pygame mixer for sound effects
 pygame.mixer.init()
 
-# Load sound files
+# Loading sound files
 food_eat_sound = pygame.mixer.Sound(r"C:\Users\HP\Desktop\Snake_CV\food eating.mp3")
 poison_eat_sound = pygame.mixer.Sound(r"C:\Users\HP\Desktop\Snake_CV\posion eating.mp3")
 
-# Constants
+# Constants for dimensions
 WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720
 
 detector = HandDetector(detectionCon=0.8, maxHands=1)
@@ -29,23 +29,23 @@ class SnakeGame:
         self.score = 0
         self.game_over = False
 
-        # Load food images
+        # Loading food images
         self.food_img = cv2.imread(food_path, cv2.IMREAD_UNCHANGED)
         self.bonus_food_img = cv2.imread(bonus_food_path, cv2.IMREAD_UNCHANGED)
         self.poison_food_img = cv2.imread(poison_food_path, cv2.IMREAD_UNCHANGED)
 
-        # Get food dimensions
+        # Getting food dimensions
         self.food_height, self.food_width, _ = self.food_img.shape
         self.bonus_food_height, self.bonus_food_width, _ = self.bonus_food_img.shape
         self.poison_food_height, self.poison_food_width, _ = self.poison_food_img.shape
 
-        # Initialize food locations
+        # Initializing food locations
         self.food_location = (0, 0)
         self.bonus_food_location = (0, 0)
         self.poison_food_location = (0, 0)
         self.randomize_food()
 
-        # Poison food timing
+        # Poison food timing setter
         self.poison_appeared_time = time.time()
         self.poison_visible = False
 
@@ -69,17 +69,17 @@ class SnakeGame:
             self.current_length += dist
             self.head_previous = curr_x, curr_y
 
-            # Reduce length if exceeded
+            # Reducing length if exceeded
             while self.current_length > self.total_allowed_length:
                 self.current_length -= self.lengths.pop(0)
                 self.points.pop(0)
 
-            # Check boundary collision
+            # Checking boundary collision
             if curr_x <= 0 or curr_x >= WINDOW_WIDTH or curr_y <= 0 or curr_y >= WINDOW_HEIGHT:
                 self.game_over = True
                 self.reset_game()
 
-            # Check if snake eats food
+            # Checking if snake eats food
             food_x, food_y = self.food_location
             if (food_x - self.food_width // 2 < curr_x < food_x + self.food_width // 2 and
                     food_y - self.food_height // 2 < curr_y < food_y + self.food_height // 2):
@@ -88,7 +88,7 @@ class SnakeGame:
                 self.score += 1
                 pygame.mixer.Sound.play(food_eat_sound)
 
-            # Check if snake eats bonus food
+            # Checking if snake eats bonus food
             bonus_x, bonus_y = self.bonus_food_location
             if (bonus_x - self.bonus_food_width // 2 < curr_x < bonus_x + self.bonus_food_width // 2 and
                     bonus_y - self.bonus_food_height // 2 < curr_y < bonus_y + self.bonus_food_height // 2):
@@ -97,7 +97,7 @@ class SnakeGame:
                 self.score += 2
                 pygame.mixer.Sound.play(food_eat_sound)
 
-            # Check if snake eats poison food
+            # Checking if snake eats poison food
             poison_x, poison_y = self.poison_food_location
             if self.poison_visible and (poison_x - self.poison_food_width // 2 < curr_x < poison_x + self.poison_food_width // 2 and
                                         poison_y - self.poison_food_height // 2 < curr_y < poison_y + self.poison_food_height // 2):
@@ -105,23 +105,23 @@ class SnakeGame:
                 self.score -= 2
                 pygame.mixer.Sound.play(poison_eat_sound)
 
-            # Hide poison food after 5 seconds
+            # Hiding poison food after 5 seconds
             if self.poison_visible and time.time() - self.poison_appeared_time > 5:
                 self.poison_visible = False
 
-            # Draw snake
+            # Drawing snake
             for i in range(1, len(self.points)):
                 cv2.line(frame, self.points[i - 1], self.points[i], (0, 0, 255), 15)
             if self.points:
                 cv2.circle(frame, self.points[-1], 20, (200, 0, 200), cv2.FILLED)
 
-            # Draw foods
+            # Drawing foods
             frame = cvzone.overlayPNG(frame, self.food_img, (food_x - self.food_width // 2, food_y - self.food_height // 2))
             frame = cvzone.overlayPNG(frame, self.bonus_food_img, (bonus_x - self.bonus_food_width // 2, bonus_y - self.bonus_food_height // 2))
             if self.poison_visible:
                 frame = cvzone.overlayPNG(frame, self.poison_food_img, (poison_x - self.poison_food_width // 2, poison_y - self.poison_food_height // 2))
 
-            # Show score
+            # Showing score
             cvzone.putTextRect(frame, f'Score: {self.score}', (50, 80), scale=3, thickness=3, offset=10)
         return frame
 
