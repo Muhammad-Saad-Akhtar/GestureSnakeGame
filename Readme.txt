@@ -2,7 +2,7 @@ Hand-Tracking Snake Game
 
 
 Overview:
-This Snake game uses **computer vision** to track hand movements instead of traditional keyboard controls. The game detects your **index finger position** using OpenCV and MediaPipe and moves the snake accordingly.
+This Snake game uses Computer Vision to track hand movements instead of traditional keyboard controls. The game detects your index finger position using OpenCV and MediaPipe and moves the snake accordingly.
 
 Features:
 - Real-time hand tracking for intuitive control.
@@ -12,10 +12,10 @@ Features:
 
 Installation:
 
-1. Clone the repository:
+1. Get the repository:
 
-git clone https://github.com/your-username/hand-tracking-snake-game.git  
-cd hand-tracking-snake-game
+https://github.com/Muhammad-Saad-Akhtar/GestureSnakeGame
+
 
 2. Install dependencies:
 
@@ -23,7 +23,7 @@ pip install opencv-python cvzone numpy pygame
 
 3. Run the game:
 
-python main.py
+python new.py
 
 
 How to Play?
