@@ -11,8 +11,8 @@ from cvzone.HandTrackingModule import HandDetector
 pygame.mixer.init()
 
 # Loading sound files
-food_eat_sound = pygame.mixer.Sound(r"C:\Users\HP\Desktop\Snake_CV\food eating.mp3")
-poison_eat_sound = pygame.mixer.Sound(r"C:\Users\HP\Desktop\Snake_CV\posion eating.mp3")
+food_eat_sound = pygame.mixer.Sound(r"C:\Users\HP\Desktop\Others\GestureSnakeGame\food eating.mp3")
+poison_eat_sound = pygame.mixer.Sound(r"C:\Users\HP\Desktop\Others\GestureSnakeGame\posion eating.mp3")
 
 # Constants for dimensions
 WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720
