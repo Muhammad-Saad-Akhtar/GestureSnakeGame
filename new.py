@@ -28,6 +28,9 @@ class SnakeGame:
         self.head_previous = (0, 0)
         self.score = 0
         self.game_over = False
+        self.paused = False
+        self.high_score = 0
+        self.difficulty = "Normal"  # Options: Easy, Normal, Hard
 
         # Loading food images
         self.food_img = cv2.imread(food_path, cv2.IMREAD_UNCHANGED)
@@ -50,13 +53,21 @@ class SnakeGame:
         self.poison_visible = False
 
     def randomize_food(self):
-        self.food_location = (random.randint(100, 1000), random.randint(100, 600))
+        while True:
+            x, y = random.randint(100, 1000), random.randint(100, 600)
+            if not any(math.hypot(x - px, y - py) < 50 for px, py in self.points):
+                self.food_location = (x, y)
+                break
         self.bonus_food_location = (random.randint(100, 1000), random.randint(100, 600))
         self.poison_food_location = (random.randint(100, 1000), random.randint(100, 600))
         self.poison_appeared_time = time.time()
         self.poison_visible = True
 
     def update(self, frame, hand_pos):
+        if self.paused:
+            cvzone.putTextRect(frame, "Paused", (500, 350), scale=8, thickness=4, colorT=(255, 255, 255), colorR=(0, 0, 255), offset=20)
+            return frame
+
         if self.game_over:
             cvzone.putTextRect(frame, "Game Over", (300, 350), scale=8, thickness=4, colorT=(255, 255, 255), colorR=(0, 0, 255), offset=20)
             cvzone.putTextRect(frame, f'Score: {self.score}', (400, 500), scale=6, thickness=5, colorT=(255, 255, 255), colorR=(0, 0, 255), offset=20)
@@ -123,6 +134,9 @@ class SnakeGame:
 
             # Showing score
             cvzone.putTextRect(frame, f'Score: {self.score}', (50, 80), scale=3, thickness=3, offset=10)
+            if self.score > self.high_score:
+                self.high_score = self.score
+            cvzone.putTextRect(frame, f'High Score: {self.high_score}', (50, 130), scale=3, thickness=3, offset=10)
         return frame
 
     def reset_game(self):
@@ -133,6 +147,7 @@ class SnakeGame:
         self.head_previous = (0, 0)
         self.score = 0
         self.game_over = False
+        self.paused = False
         self.randomize_food()
 
 def main():
@@ -149,9 +164,22 @@ def main():
         if hands:
             hand_pos = hands[0]['lmList'][8][:2]
             img = game.update(img, hand_pos)
+        cv2.putText(img, f"Press 'P' to Pause/Resume | Difficulty: {game.difficulty}", (10, 700), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
         cv2.imshow("Snake Game", img)
-        if cv2.waitKey(1) == ord('q'):
+        key = cv2.waitKey(1)
+        if key == ord('q'):
             break
+        elif key == ord('p'):
+            game.paused = not game.paused
+        elif key == ord('1'):
+            game.difficulty = "Easy"
+            game.total_allowed_length = 200
+        elif key == ord('2'):
+            game.difficulty = "Normal"
+            game.total_allowed_length = 150
+        elif key == ord('3'):
+            game.difficulty = "Hard"
+            game.total_allowed_length = 100
     cap.release()
     cv2.destroyAllWindows()
 
